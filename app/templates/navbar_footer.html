@@ -1,96 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rental System</title>
-    
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Apply the custom fonts */
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* Classic font for navbar links */
-        .classic-font {
-            font-family: 'Merriweather', serif;
-        }
-
-        /* Navbar visibility on scroll */
-        .hidden-on-scroll {
-            transition: transform 0.3s ease;
-        }
-
-        .hide {
-            transform: translateY(-100%);
-        }
-        
-        .show {
-            transform: translateY(0);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rental Ease</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen bg-green-100">
 
-<!-- Navbar -->
-<nav id="navbar" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 shadow-md fixed w-full top-0 z-50 hidden-on-scroll">
-    <div class="container mx-auto flex justify-between items-center px-4">
-        <!-- Logo -->
-        <a href="{% url 'home' %}" class="text-2xl font-bold hover:text-blue-300 transition duration-300">
-            RentalEase
-        </a>
-
-        <!-- Navbar Links -->
-        <ul class="flex space-x-6">
-            <li><a href="{% url 'home' %}" class="px-4 py-2 rounded hover:bg-blue-700 transition duration-300 classic-font">Home</a></li>
-            <li><a href="{% url 'allproperties' %}"  class="px-4 py-2 rounded hover:bg-blue-700 transition duration-300 classic-font">Property</a></li>
-            <li><a href="/contact" class="px-4 py-2 rounded hover:bg-blue-700 transition duration-300 classic-font">Contact</a></li>
-            <li><a href="/logout" class="px-4 py-2 rounded bg-red-500 hover:bg-red-600 transition duration-300">Logout</a></li>
-        </ul>
+  <!-- Navbar -->
+  <nav class="bg-green-700 p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="text-white text-xl font-semibold">Rental Ease</div>
+      <ul class="flex space-x-6">
+        
+        <li><a href="/property" class="text-white hover:text-gray-300">Buy</a></li>
+        <li><a href="/login" class="text-white hover:text-gray-300">Login</a></li>
+        <li><a href='/add' class="text-white hover:text-gray-300">Sell</a></li>
+        <li><a href="/bookings" class="text-white hover:text-gray-300">Booking list</a></li>
+        <li><a href="/contact" class="text-white hover:text-gray-300">Contact</a></li>
+        <li><a href="/logout" class="text-white hover:text-gray-300">Logout</a></li>
+      </ul>
     </div>
-</nav>
 
-<!-- Content Area -->
-<main class="flex-grow container mx-auto p-6 pt-24">
+    <!-- Search bar and button -->
+    <div class="container mx-auto mt-4 flex justify-center items-center space-x-2">
+      <input type="text" placeholder="Search..." class="px-4 py-2 rounded-lg border border-gray-300 w-3/4 sm:w-1/2 md:w-1/3">
+      <button class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Search</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="flex-grow p-6">
+    <h1 class="text-2xl font-semibold text-green-900">Properties</h1>
     {% block content %}
+    <!-- Child content will go here -->
     {% endblock %}
-</main>
+  </div>
 
-<!-- Footer -->
-<footer id="footer" class="bg-gray-900 text-gray-400 py-6">
-    <div class="container mx-auto text-center space-y-4">
-        <div class="flex justify-center space-x-4">
-            <a href="/" class="hover:text-white transition duration-300">Home</a>
-            <span>|</span>
-            <a href="/Property_management.html" class="hover:text-white transition duration-300">Property Management </a>
-            <span>|</span>
-            <a href="/contact" class="hover:text-white transition duration-300">Contact</a>
-        </div>
-        <p class="text-gray-500">&copy; 2024 RentalEase. All rights reserved.</p>
-    </div>
-</footer>
-
-<script>
-    let lastScrollY = window.scrollY;
-    const navbar = document.getElementById("navbar");
-
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > lastScrollY) {
-            // Scroll down
-            navbar.classList.add("hide");
-        } else {
-            // Scroll up
-            navbar.classList.remove("hide");
-        }
-        lastScrollY = window.scrollY;
-    });
-</script>
+  <!-- Footer -->
+  <footer class="bg-green-800 text-white text-center p-5 w-full">
+    <p>&copy; 2024 Your Company. All rights reserved.</p>
+  </footer>
 
 </body>
 </html>

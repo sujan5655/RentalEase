@@ -1,22 +1,24 @@
+
 from django.urls import path
-from . import views
+from app.views import *
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('home/', views.home, name='home'),
-    path('register/', views.Registration, name='register'),
-    path('login/', views.Login, name='login'),
-    path('logout/', views.Logout, name='logout'),
-    path('seller_dashboard/', views.seller_dashboard, name='seller_dashboard'),
-    path('add/', views.add_property, name='add_property'),
-    path('update/<int:pk>/', views.update_property, name='update_property'), 
-    path('delete/<int:pk>/', views.delete_property, name='delete_property'),
-
-    path('property/', views.Properties, name='allproperties'),
-    path('property/<int:pk>/', views.property_detail, name='property_detail'),  
-    path('book_property/<int:pk>/', views.book_property, name='book_property'), 
-    path('seller/bookings/', views.seller_bookings, name='seller_bookings'),
-    path('seller/bookings/<int:booking_id>/<str:status>/', views.update_booking_status, name='update_booking_status'),
-    path('bookings/<int:id>/approve/', views.approve_booking, name='approve_booking'),  # Kept this as id since it relates to the booking ID
-    
+#     path('', index, name='index'),
+    path('register/',registration,name='register'),
+    path('login/',login_page,name='login'),
+    path('',home_page,name='home'),
+    path('logout/',logout_page,name='logout'),
+    path('seller_dashboard/', seller_dashboard, name='seller'),
+    path('add',add_property,name='add_property'),
+    path('update/<int:id>/',update_property,name='update'),
+    path('property/', Properties, name='allproperties'),
+    path('property/<int:property_id>/', property_detail, name='property_detail'),
+    path('book/<int:property_id>/', book_property, name='book_property'),
+      path('seller/bookings/', seller_bookings, name='seller_bookings'),
+      path('seller/bookings/<int:booking_id>/<str:status>/', update_booking_status, name='update_booking_status'),
+       path('property/<int:property_id>/book/', book_property, name='book_property'),
+       path('bookings/<int:id>/approve/', approve_booking, name='approve_booking'),
+         path('bookings', booking_list, name='booking_list'),
+         path('bookings/<int:id>/reject/',approve_booking,name='reject_booking'),
+          path('contact', contact_view, name='contact'),
 ]
