@@ -28,35 +28,43 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import check_password
+
 def login_page(request):
+    error = None
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        
-        # Ensure user exists before attempting authentication
+
+        # Ensure user exists before attempting password verification
         try:
             user = User.objects.get(email=email)
+            print(user.email)
         except User.DoesNotExist:
-            messages.error(request, 'User with this email does not exist.')
-            return redirect('login')  # Redirect back to login page
+            error = "User does not exist"
+            return render(request, 'login.html', {'error': error})
 
-        # Authenticate the user
-        user = authenticate(request, username=user.email, password=password)
-        
-        if user is not None:
+        # Verify the password manually
+        if check_password(password, user.password):
             login(request, user)
-            return redirect('add_property')  # Redirect to a home page or desired page after login
+            return redirect('add_property')  # Redirect to the desired page after login
         else:
-            messages.error(request, 'Invalid email or password.')
-            return redirect('login')  # Redirect back to login page if authentication fails
+            error = "Your email or password is incorrect"
 
-    return render(request, 'login.html')
+    context = {
+        'error': error
+    }
+    return render(request, 'login.html', context)
+
 
 
 def logout_page(request):
     if request.user.is_authenticated:
         logout(request)  
-    return redirect('login/')  
+    return redirect('loginpage')  
 
 def home_page(request):
     return render(request, 'home.html')
@@ -148,17 +156,27 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def book_property(request, property_id):
     property = get_object_or_404(Property, id=property_id)
-    property_image = property.image 
-    print(property_image)
+    property_image = property.image  # Get the property image
+
     if request.method == 'POST':
-        # Check if the property is not approved and is available
-        if property.approval_status != 'approved' and property.available:
-            # Process the booking request
-            # You can add your booking logic here
+        # Check if the property is approved and available
+        if property.approval_status == 'approved' and property.is_available:
+            # Example booking creation logic
+            booking = Booking.objects.create(
+                property=property,
+                user=request.user,
+                status='pending'
+            )
+            
+            # Set the property as unavailable and booked
+            property.is_available = False
+            property.is_booked = True
+            property.save()
+
             messages.success(request, 'Booking request submitted successfully.')
-            return redirect('success_url')  # Redirect to a success page or the same property page
+            return redirect('allproperties')  # Redirect to a success page or another URL
         else:
-            messages.error(request, 'This property is either approved or not available for booking.')
+            messages.error(request, 'This property is either not approved or not available for booking.')
 
     return render(request, 'book_property.html', {'property': property})
 
@@ -261,19 +279,19 @@ def book_property(request, property_id):
         # Check if the user already has a pending or confirmed booking for this property
         if Booking.objects.filter(property=property, client=request.user, approval_status__in=['pending', 'confirmed']).exists():
             messages.warning(request, "You already have an existing booking for this property.")
-            return redirect('/property/')
+            return redirect('allproperties')
 
         # Check if the property has any confirmed bookings by other users
         if Booking.objects.filter(property=property, approval_status='confirmed').exists():
             messages.warning(request, "This property is already fully booked.")
-            return redirect('/property/')
+            return redirect('allproperties')
 
         # Create a new booking request
         booking = Booking(property=property, client=request.user, approval_status='pending')
         booking.save()
 
         messages.success(request, "Your booking request has been submitted successfully!")
-        return redirect('/property/')
+        return redirect('allproperties')
 
     return render(request, 'book_property.html', {'property': property})
 
@@ -304,7 +322,7 @@ def contact_view(request):
             messages.error(request, "All fields are required.")
         else:
             # Here you could save the data to the database or send an email, etc.
-            messages.success(request, "Your message has been sent successfully!")
+           
             return redirect('allproperties')
 
     return render(request, 'contact.html')

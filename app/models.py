@@ -31,3 +31,12 @@ class Booking(models.Model):
 
     def __str__(self):
         return f'{self.property.seller} - {self.client.username}'
+    
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15)
+    location = models.CharField(max_length=255)
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.name} - {self.email}"
