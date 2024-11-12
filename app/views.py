@@ -153,32 +153,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Property, Booking
 from django.contrib.auth.decorators import login_required
 
-@login_required
-def book_property(request, property_id):
-    property = get_object_or_404(Property, id=property_id)
-    property_image = property.image  # Get the property image
-
-    if request.method == 'POST':
-        # Check if the property is approved and available
-        if property.approval_status == 'approved' and property.is_available:
-            # Example booking creation logic
-            booking = Booking.objects.create(
-                property=property,
-                user=request.user,
-                status='pending'
-            )
-            
-            # Set the property as unavailable and booked
-            property.is_available = False
-            property.is_booked = True
-            property.save()
-
-            messages.success(request, 'Booking request submitted successfully.')
-            return redirect('allproperties')  # Redirect to a success page or another URL
-        else:
-            messages.error(request, 'This property is either not approved or not available for booking.')
-
-    return render(request, 'book_property.html', {'property': property})
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
