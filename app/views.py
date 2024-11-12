@@ -41,7 +41,7 @@ def login_page(request):
             return redirect('login')  # Redirect back to login page
 
         # Authenticate the user
-        user = authenticate(request, username=user.username, password=password)
+        user = authenticate(request, username=user.email, password=password)
         
         if user is not None:
             login(request, user)
@@ -110,9 +110,10 @@ from .forms import PropertyForm
 from .models import Property
 
 
+@login_required
 def update_property(request, id):
     # Get the property instance by ID
-    property = get_object_or_404(Property, id=id)
+    property = Property.objects.get(id=id)
 
     if request.method == "POST":
         # Bind form with POST data and instance to update
@@ -144,7 +145,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Property, Booking
 from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def book_property(request, property_id):
     property = get_object_or_404(Property, id=property_id)
     property_image = property.image 
@@ -228,13 +229,10 @@ def property_detail(request, property_id):
     }
     return render(request, 'property_details.html', context)
 
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Property, Booking
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def seller_bookings(request):
-    # Fetch properties listed by the logged-in seller
+    
     properties = Property.objects.filter(seller=request.user)
     
     # Retrieve all bookings related to these properties
@@ -279,6 +277,7 @@ def book_property(request, property_id):
 
     return render(request, 'book_property.html', {'property': property})
 
+@login_required
 def Properties(request):
     property=Property.objects.filter()
     context={
@@ -286,11 +285,13 @@ def Properties(request):
     }
     return render(request,'Property.html',context)
 
+@login_required
 def booking_list(request):
     # Fetch bookings that are not approved
     bookings = Booking.objects.filter(approval_status__in=['pending', 'rejected'])
     return render(request, 'booking_list.html', {'bookings': bookings})
 
+@login_required
 def contact_view(request):
     if request.method == 'POST':
         name = request.POST.get('name')
